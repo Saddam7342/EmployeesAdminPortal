@@ -3,6 +3,7 @@ using EmployeesAdminPortal.Models;
 using EmployeesAdminPortal.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesAdminPortal.Controllers
 {
@@ -17,6 +18,7 @@ namespace EmployeesAdminPortal.Controllers
             this.applicationDbContext = applicationDbContext;
         }
         [HttpGet]
+        [Route("[action]")]
         public IActionResult GetAllEmployees()
         {
             var allEmployees =  applicationDbContext.Employees.ToList();
@@ -28,7 +30,7 @@ namespace EmployeesAdminPortal.Controllers
 
 
         [HttpGet]
-        [Route("{id:guid}")]
+        [Route("[action]")]
         public IActionResult GetEmployeeById(Guid id)
         {
            var employee = applicationDbContext.Employees.Find(id);
@@ -46,7 +48,7 @@ namespace EmployeesAdminPortal.Controllers
 
 
         [HttpGet]
-        [Route("{name}")]
+        [Route("[action]")]
         public IActionResult GetEmployeeByName(string name)
         {
             var employee = applicationDbContext.Employees.FirstOrDefault(e=> e.Name.ToLower() == name.ToLower());
@@ -62,6 +64,7 @@ namespace EmployeesAdminPortal.Controllers
 
 
         [HttpPost]
+        [Route("[action]")]
         public IActionResult addEmployee(AddEmployeeDto employeeDto)
         {
             var employeeEntity = new Employee() {
@@ -81,7 +84,7 @@ namespace EmployeesAdminPortal.Controllers
 
 
         [HttpPut]
-        [Route("{id:guid}")]
+        [Route("[action]")]
         public IActionResult updateEmployeeById(Guid id, UpdateEmployeeDto updateEmployeeDto)
         {
             var employee = applicationDbContext.Employees.Find(id);
@@ -101,7 +104,7 @@ namespace EmployeesAdminPortal.Controllers
 
 
         [HttpDelete]
-        [Route("{id:guid}")]
+        [Route("[action]")]
 
         public IActionResult deleteEmployeeById(Guid id)
         {
@@ -110,6 +113,23 @@ namespace EmployeesAdminPortal.Controllers
             applicationDbContext.Employees.Remove(employee);
             applicationDbContext.SaveChanges();
             return Ok("Employee removed successfully");
+        }
+
+
+        [HttpGet]
+        //[Route("{}")]
+        [Route("[action]")]
+        public async Task<IActionResult> searchEmployee(string? searchQuery)
+        {
+            var query = applicationDbContext.Employees.AsQueryable();
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                query = query.Where(e => e.Name.ToLower().Contains(searchQuery) || e.Email.ToLower().Contains(searchQuery) || (e.Phone != null && e.Phone.ToLower().Contains(searchQuery)));
+            }
+            var employees = await query.ToListAsync();
+
+            return Ok(employees);
         }
     }
 }

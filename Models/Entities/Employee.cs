@@ -10,5 +10,12 @@
 
         public decimal Salary { get; set; }
 
+        public bool IsVerified { get; set; } = false;
+        public bool IsDeleted { get; set; } = false;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+
+        public List<BankAccount> BankAccounts { get; set; } = new List<BankAccount>();
     }
 }

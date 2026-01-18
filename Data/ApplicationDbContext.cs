@@ -10,5 +10,6 @@ namespace EmployeesAdminPortal.Data
         {
         }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<BankAccount> BankAccounts { get; set; }
     }
 }
