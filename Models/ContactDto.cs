@@ -2,8 +2,7 @@
 {
     public class ContactDto
     {
-        public string ContactType { get; set; }
-        public string Value { get; set; }
-        public bool IsPrimary { get; set; }
+        public string Phone { get; set; }
+        public string Type { get; set; }
     }
 }
